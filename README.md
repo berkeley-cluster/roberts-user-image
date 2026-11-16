@@ -12,8 +12,10 @@ The default environment for UC Berkeley Roberts Cluster users.
   jupyter-rsession-proxy.
 - **code-server** (VS Code in the browser), also through JupyterLab.
 - **Tools:** `kubectl` with kubelogin (`kubectl oidc-login`, for
-  logging in through authentik), Claude Code, git, ssh client, tmux,
-  editors.
+  logging in through authentik) and Kueue's plugin (`kubectl kueue`);
+  `cluster-queue`, also `kubectl cluster-queue` (the cluster's queues
+  at a glance, like `squeue`; in this repo); Claude Code, git, ssh
+  client, tmux, editors.
 
 ## Image
 
@@ -73,6 +75,14 @@ Change the `ARG`s at the top of the `Dockerfile` together:
     | .digest)'
   ```
 - `KUBECTL_VERSION`: the cluster's Kubernetes version.
+- `KUEUE_VERSION` and `KUEUECTL_SHA256`: the cluster's Kueue version,
+  and the digest of its `kubectl-kueue-linux-amd64` release asset:
+
+  ```sh
+  gh release view "$KUEUE_VERSION" -R kubernetes-sigs/kueue \
+    --json assets --jq '.assets[]
+    | select(.name == "kubectl-kueue-linux-amd64") | .digest'
+  ```
 - `KUBELOGIN_VERSION` and `KUBELOGIN_SHA256`: kubelogin's current
   release, and the checksum from its `.sha256` file:
 

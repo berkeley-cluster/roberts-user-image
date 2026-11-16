@@ -77,6 +77,10 @@ ARG KUBECTL_VERSION=v1.37.1
 # authentik; the checksum is the release's .sha256 file
 ARG KUBELOGIN_VERSION=v1.36.4
 ARG KUBELOGIN_SHA256=9e8baeb4905d35a301304af2548324997add512fe94ab20e65993d167212bf85
+# kubectl-kueue, matching the cluster's Kueue version; the checksum is
+# the release asset's digest on GitHub
+ARG KUEUE_VERSION=v0.20.6
+ARG KUEUECTL_SHA256=da97b8c8576ff1ba0f87d3b77d2681315309158429c081f4f0e86dafecd79c03
 # code-server's own release, which bundles its Node.js; conda-forge's
 # package would constrain the conda environment's Node.js. The checksum
 # is the release asset's digest on GitHub.
@@ -115,6 +119,18 @@ RUN curl -fsSL -o /usr/local/bin/kubectl \
     echo "$(curl -fsSL "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl.sha256")  /usr/local/bin/kubectl" \
       | sha256sum -c - && \
     chmod 755 /usr/local/bin/kubectl
+
+# "cluster-queue" (also "kubectl cluster-queue"): the cluster's Kueue
+# queues at a glance, like squeue and sinfo
+COPY --chmod=755 cluster-queue /usr/local/bin/cluster-queue
+RUN ln -s cluster-queue /usr/local/bin/kubectl-cluster_queue
+
+# kubectl-kueue ("kubectl kueue"), Kueue's own plugin, for managing
+# one's workloads
+RUN curl -fsSL -o /usr/local/bin/kubectl-kueue \
+      "https://github.com/kubernetes-sigs/kueue/releases/download/${KUEUE_VERSION}/kubectl-kueue-linux-amd64" && \
+    echo "${KUEUECTL_SHA256}  /usr/local/bin/kubectl-kueue" | sha256sum -c - && \
+    chmod 755 /usr/local/bin/kubectl-kueue
 
 # kubelogin, installed as the kubectl plugin "oidc-login"
 RUN curl -fsSL -o /tmp/kubelogin.zip \
