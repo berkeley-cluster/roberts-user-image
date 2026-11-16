@@ -1,0 +1,11 @@
+# Additions to the base image's conda environment (/opt/conda), pinned.
+# code-server itself is installed from its release in the Dockerfile.
+channels:
+  - conda-forge
+dependencies:
+  # RStudio inside JupyterLab
+  - jupyter-rsession-proxy=2.5.1
+  # opens code-server from JupyterLab
+  - jupyter-vscode-proxy=0.7
+  # Node.js, for Claude Code
+  - nodejs=26.13.1

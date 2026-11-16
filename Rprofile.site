@@ -1,0 +1,25 @@
+# Site R profile for the Roberts Cluster user image.
+#
+# Packages come from Posit Package Manager, pinned to one dated snapshot
+# (@PPM_SNAPSHOT@, set by the Dockerfile's PPM_SNAPSHOT), so the image's
+# packages and what users install later are the same versions, as
+# prebuilt binaries for this Ubuntu release (@UBUNTU_CODENAME@).
+local({
+  snapshot <- "@PPM_SNAPSHOT@"
+  ppm <- "https://packagemanager.posit.co"
+  options(
+    repos = c(CRAN = sprintf("%s/cran/__linux__/@UBUNTU_CODENAME@/%s",
+                             ppm, snapshot)),
+    BioC_mirror = sprintf("%s/bioconductor/%s", ppm, snapshot),
+    BIOCONDUCTOR_CONFIG_FILE = sprintf(
+      "%s/bioconductor/%s/config.yaml", ppm, snapshot),
+    # Package Manager serves binaries only to clients that identify
+    # their R version and platform this way
+    HTTPUserAgent = sprintf(
+      "R/%s R (%s)", getRversion(),
+      paste(getRversion(), R.version["platform"], R.version["arch"],
+            R.version["os"])),
+    Ncpus = max(1L, parallel::detectCores() %/% 2L)
+  )
+  Sys.setenv(R_BIOC_VERSION = "@BIOC_VERSION@")
+})

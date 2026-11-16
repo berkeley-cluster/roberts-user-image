@@ -1,0 +1,53 @@
+# System libraries for R packages, from Posit Package Manager's
+# system requirements for the packages in install-r-packages.R on
+# Ubuntu 26.04, plus tools.
+cmake
+gdal-bin
+gsfonts
+libabsl-dev
+libcairo2-dev
+libcurl4-openssl-dev
+libfontconfig1-dev
+libfreetype6-dev
+libfribidi-dev
+libgdal-dev
+libgeos-dev
+libgit2-dev
+libgl1-mesa-dev
+libglpk-dev
+libglu1-mesa-dev
+libgmp3-dev
+libharfbuzz-dev
+libhdf5-dev
+libicu-dev
+libjpeg-dev
+libmagick++-dev
+libnetcdf-dev
+libpng-dev
+libproj-dev
+libsqlite3-dev
+libssl-dev
+libtiff-dev
+libudunits2-dev
+libuv1-dev
+libwebp-dev
+libx11-dev
+libxml2-dev
+libzmq3-dev
+make
+pandoc
+pkg-config
+texlive
+zlib1g-dev
+
+# tools
+htop
+jq
+less
+nano
+openssh-client
+rsync
+tmux
+unzip
+vim
+zip
