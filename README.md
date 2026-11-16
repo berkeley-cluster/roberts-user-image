@@ -11,7 +11,9 @@ The default environment for UC Berkeley Roberts Cluster users.
 - **RStudio Server,** opened from JupyterLab through
   jupyter-rsession-proxy.
 - **code-server** (VS Code in the browser), also through JupyterLab.
-- **Tools:** `kubectl`, Claude Code, git, ssh client, tmux, editors.
+- **Tools:** `kubectl` with kubelogin (`kubectl oidc-login`, for
+  logging in through authentik), Claude Code, git, ssh client, tmux,
+  editors.
 
 ## Image
 
@@ -71,6 +73,15 @@ Change the `ARG`s at the top of the `Dockerfile` together:
     | .digest)'
   ```
 - `KUBECTL_VERSION`: the cluster's Kubernetes version.
+- `KUBELOGIN_VERSION` and `KUBELOGIN_SHA256`: kubelogin's current
+  release, and the checksum from its `.sha256` file:
+
+  ```sh
+  v=$(gh release view -R int128/kubelogin \
+    --json tagName -q .tagName)
+  gh release download "$v" -R int128/kubelogin \
+    -p kubelogin_linux_amd64.zip.sha256 -O -
+  ```
 - `environment.yml`: the pinned conda packages.
 - `PPM_SNAPSHOT`: a recent date, and `BIOC_VERSION` to match the R
   version. Then update the pins to the new snapshot's versions; pins

@@ -73,6 +73,10 @@ RUN Rscript /tmp/install-r-packages.R && \
 FROM base AS final
 
 ARG KUBECTL_VERSION=v1.37.1
+# kubelogin (kubectl oidc-login), for logging in to the cluster through
+# authentik; the checksum is the release's .sha256 file
+ARG KUBELOGIN_VERSION=v1.36.4
+ARG KUBELOGIN_SHA256=9e8baeb4905d35a301304af2548324997add512fe94ab20e65993d167212bf85
 # code-server's own release, which bundles its Node.js; conda-forge's
 # package would constrain the conda environment's Node.js. The checksum
 # is the release asset's digest on GitHub.
@@ -111,6 +115,14 @@ RUN curl -fsSL -o /usr/local/bin/kubectl \
     echo "$(curl -fsSL "https://dl.k8s.io/release/${KUBECTL_VERSION}/bin/linux/amd64/kubectl.sha256")  /usr/local/bin/kubectl" \
       | sha256sum -c - && \
     chmod 755 /usr/local/bin/kubectl
+
+# kubelogin, installed as the kubectl plugin "oidc-login"
+RUN curl -fsSL -o /tmp/kubelogin.zip \
+      "https://github.com/int128/kubelogin/releases/download/${KUBELOGIN_VERSION}/kubelogin_linux_amd64.zip" && \
+    echo "${KUBELOGIN_SHA256}  /tmp/kubelogin.zip" | sha256sum -c - && \
+    unzip -p /tmp/kubelogin.zip kubelogin > /usr/local/bin/kubectl-oidc_login && \
+    chmod 755 /usr/local/bin/kubectl-oidc_login && \
+    rm /tmp/kubelogin.zip
 
 # Claude Code, installed system-wide: the home directory is a volume
 RUN HOME=/tmp/root-home npm install -g --prefix "${CONDA_DIR}" \
