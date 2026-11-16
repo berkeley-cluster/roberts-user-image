@@ -26,14 +26,18 @@ KUBECTL_FLAGS = []
 
 
 def kubectl(*args):
+    # stderr goes to the terminal: kubelogin prints its login link and
+    # code there, and kubectl its errors
     p = subprocess.run(["kubectl", *KUBECTL_FLAGS, *args, "-o", "json"],
-                       capture_output=True, text=True)
+                       stdout=subprocess.PIPE, text=True)
     if p.returncode != 0:
-        sys.exit(p.stderr.strip())
+        sys.exit(p.returncode)
     return json.loads(p.stdout)
 
 
 def raw(path):
+    """GET an API path; None if it fails (e.g. not allowed). Runs after
+    kubectl() has logged in, so there's no prompt to show."""
     p = subprocess.run(["kubectl", *KUBECTL_FLAGS, "get", "--raw", path],
                        capture_output=True, text=True)
     if p.returncode != 0:
@@ -126,7 +130,11 @@ def main():
 
         pending = raw("/apis/visibility.kueue.x-k8s.io/v1beta2/"
                       f"clusterqueues/{name}/pendingworkloads")
-        items = (pending or {}).get("items", [])
+        if pending is None:
+            print("  Waiting: not available")
+            print()
+            continue
+        items = pending.get("items", [])
         print(f"  Waiting: {len(items)}")
         if items:
             table([[w.get("positionInClusterQueue", -1) + 1,
