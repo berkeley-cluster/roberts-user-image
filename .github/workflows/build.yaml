@@ -16,7 +16,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      IMAGE: ghcr.io/berkeley-cluster/user-image
+      IMAGE: ghcr.io/berkeley-cluster/roberts-user-image
     steps:
       # The image is large; GitHub's runners need room for it
       - name: Free disk space

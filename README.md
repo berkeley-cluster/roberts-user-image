@@ -1,4 +1,4 @@
-# user-image
+# roberts-user-image
 
 The default environment for UC Berkeley Roberts Cluster users.
 
